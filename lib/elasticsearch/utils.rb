@@ -1,7 +1,7 @@
-require "elasticsearch/utils/version"
+require 'elasticsearch/utils/version'
+require 'elasticsearch/api/actions/stream'
 
 module Elasticsearch
   module Utils
-    # Your code goes here...
   end
 end

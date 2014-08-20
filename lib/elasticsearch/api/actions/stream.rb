@@ -1,28 +1,38 @@
 module Elasticsearch
   module API
     module Actions
-    	def stream(arguments = {})
-    		raise ArgumentError.new "wrong number of arguments (#{memo_args.count} for 0..1)" if memo_args.count > 1
-    		raise ArgumentError.new 'no block given' unless block_given?
+      # search.stream index: 'scrollindex', scroll: '5m', body: { query: { title: 'test' } }
+      #
+      # counter = 0
+      # search.stream counter, index: 'scrollindex', scroll: '5m', body: { query: { title: 'test' } }
 
-    		results = client.search opts.reverse_merge index: primary_index, scroll: scroll
+      def stream(*args, &block)
+        raise ArgumentError.new "wrong number of arguments (#{args.count} for 1..2)" if args.count > 2
+        raise ArgumentError.new 'no block given' unless block_given?
+        
+        opts, memo = *args.reverse
+        opts[:scroll] = opts[:scroll] || opts['scroll'] || '5m'
+        
+        scroll_opts = { :scroll => opts[:scroll] }
 
-		    scroll_opts = { scroll_id: results['_scroll_id'], scroll: scroll }
-
-    		memo = memo_args.first
-
-    		catch(:stop_stream) do
-      		until results['hits']['hits'].empty? do
-        		results['hits']['hits'].each do |doc|
-          	doc_source = doc['_source']
-          	memo = yield doc_source, memo
-        	end
-
-        	results = client.scroll scroll_opts
-      	end
-      	
-      	memo
-    	end
+        catch :stop_stream do
+          results = search opts
+          scroll_opts[:scroll_id] = results['_scroll_id']
+          
+          results = scroll scroll_opts if opts[:search_type] =~ /scan/
+          
+          until results['hits']['hits'].empty? do
+            scroll_opts[:scroll_id] = results['_scroll_id']
+            results['hits']['hits'].each do |doc|
+              doc_source = doc['_source']
+              memo = yield doc_source, memo
+            end
+            results = scroll scroll_opts
+          end
+        end
+        
+        memo
+      end
     end
   end
 end
