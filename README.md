@@ -1,5 +1,7 @@
 # Elasticsearch::Utils
 
+[![Gem Version](https://badge.fury.io/rb/elasticsearch-utils.svg)](http://badge.fury.io/rb/elasticsearch-utils)
+
 Adds more cool methods to [`Elasticsearch::Client`](https://github.com/elasticsearch/elasticsearch-ruby) clients.
 
 ## Installation
@@ -22,7 +24,7 @@ Or install it yourself as:
 
 ### Streaming
 
-For those times when you want to map over all results of a search, perhaps in a background job, that may be very large and not worry about paging. This method leverages the [`scroll`](http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/scan-scroll.html) feature of ElasticSearch to maximize server-side efficiency.
+For those times when you want to map over all results of a search (which may be very large, perhaps in a background job) and not worry about paging. This method leverages the [`scroll`](http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/scan-scroll.html) feature of ElasticSearch to maximize server-side efficiency.
 
 In this example, we run a search for all Bobs in the index and output their last name. There are a ton of bobs in Bobland so the deep paging would normally tax the server, so we opt to stream.
 
