@@ -24,8 +24,7 @@ module Elasticsearch
           until results['hits']['hits'].empty? do
             scroll_opts[:scroll_id] = results['_scroll_id']
             results['hits']['hits'].each do |doc|
-              doc_source = doc['_source']
-              memo = yield doc_source, memo
+              memo = yield doc, memo
             end
             results = scroll scroll_opts
           end
