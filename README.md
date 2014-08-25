@@ -42,7 +42,7 @@ search_body = {
 search_params = index: :bobland, type: :person, body: search_body
 
 client.stream search_params do |doc|
-  puts doc['name_last']
+  puts doc['_source']['name_last']
 end
 ```
 
@@ -51,7 +51,7 @@ You can pass a `memo` variable to the block to track state in subsequent results
 ```
 bob_families = SortedSet.new
 bob_families = client.stream search_params do |doc, bob_families|
-  bob_families << doc['name_last']
+  bob_families << doc['_source']['name_last']
 end
 
 puts "There are #{bob_families.count} families of bobs!"
