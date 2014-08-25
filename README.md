@@ -46,7 +46,7 @@ client.stream search_params do |doc|
 end
 ```
 
-You can pass a `memo` variable to the block to track state in subsequent results. Stream will return the resulting memo.
+You can pass a `memo` variable to the block to track state in subsequent results. The memo will become the return value of your block and will be passed to the next iteration.
 
 ```
 bob_families = SortedSet.new
